@@ -43,7 +43,7 @@ const findById = async (obj) => {
 
 const updateById = async (findObj, updateObj) => {
   try {
-    await Task.findOneAndUpdate(findObj, updateObj);
+    await Task.findOneAndUpdate(findObj, updateObj, { runValidators: true });
     const task = await Task.findOne(findObj)
       .sort({ status: 1, created: 1 })
       .select(" taskName status taskId created completed -_id");

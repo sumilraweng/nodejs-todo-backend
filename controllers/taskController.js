@@ -1,20 +1,5 @@
 const todoAdapaterModel = require("../models/todoAdapaterModel");
 const Task = new todoAdapaterModel(process.env.DATABASE).database;
-module.exports.verifyPostRequest = (req, res, next) => {
-  const requiredProperties = ["taskName"];
-  let result = requiredProperties.every((keys) => {
-    return req.body[keys] && req.body[keys].trim().length !== 0;
-  });
-  if (!result) {
-    res.status(400).json({
-      status: "unsecusseful",
-      meassage: "request body is invalid",
-    });
-    return;
-  }
-  req.body.taskName = req.body.taskName.trim();
-  next();
-};
 
 module.exports.getAllTask = async (req, res, next) => {
   try {
@@ -48,7 +33,10 @@ module.exports.updateTaskById = async (req, res, next) => {
     if ((req.body.status = "completed")) {
       req.body.completed = Date.now();
     }
-    const task = await Task.updateTask({ taskId: req.params.id }, req.body);
+    const task = await Task.updateTask(
+      { taskId: req.params.id },
+      { status: req.body.status }
+    );
     res.status(201).json(task);
   } catch (err) {
     console.log("updateTask-->", err);
